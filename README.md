@@ -153,6 +153,11 @@ progress is saved.
 
 - Each finding cites the code. CodeBadger checks the quoted excerpt against the exact Git revision
   and fixes line numbers only when the match is unique.
+- Every finding has a severity from one fixed scale: **blocker** (harm on a path that is used:
+  wrong results, data loss, any security defect, breaking an external contract), **warning** (a
+  real defect with limited reach), **suggestion** (a defect with negligible effect), **question**
+  (asks the author whether a change is meant that way) and **nit** (a typo or misleading comment).
+  A defect that fits a blocker is a blocker, even when it only happens in an edge case.
 - Filter by severity and status. Nits and defects that already existed before the pull request
   start hidden.
 - Each finding lists other places with the same pattern, so the whole class gets fixed at once.
@@ -211,7 +216,12 @@ A fixed rule, not the model, rates the proof as strong, adequate, weak or missin
 Every review shows one of four recommendations: **Ready to approve**, **Approve with comments**,
 **Changes needed** or **Can't assess**. A fixed rule decides from open findings, acceptance
 criteria, proof, and rollback safety, and names up to three reasons. Your GitHub review draft starts
-with the matching decision. You still decide.
+with the matching decision: Approve, Request changes, or Comment when open questions to the author
+are the only reason. You still decide.
+
+The **?** beside the recommendation shows its rules in short. **How CodeBadger decides** — in the
+sidebar, the **Help** menu and the command palette — explains them in full: which findings count,
+what each severity means, and how acceptance criteria, tests and rollback safety come in.
 
 ### Impact, risk and rollback
 
@@ -328,6 +338,27 @@ access — open, merged or closed.
 No. The AI helps you understand the change and find possible problems. You check the evidence and
 make the decision. The recommendation and the independent check are hints, never automatic
 actions.
+
+</details>
+
+<details>
+<summary><strong>When does CodeBadger recommend changes?</strong></summary>
+
+The recommendation is computed from the analysis, not by another AI call. The first level that
+matches decides:
+
+- **Can't assess:** the analysis did not finish, or chapters of a large pull request are missing.
+- **Changes needed:** an open blocker, an acceptance criterion not met, or code that does not match
+  the description.
+- **Approve with comments:** an open warning or question to the author, a criterion or the
+  description only partly met, no tests for the changed behavior, or an irreversible change without
+  a feature flag.
+- **Ready to approve:** none of the above.
+
+A finding counts while it is open, unless it existed before the pull request or the verifiers
+contradicted it. Suggestions, nits, the risk level and CI never count. CodeBadger only preselects
+the decision in your GitHub review; nothing is sent until you publish. All rules are in **How
+CodeBadger decides** in the app.
 
 </details>
 
